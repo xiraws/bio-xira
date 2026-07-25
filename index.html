@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mr. V</title>
+    <meta name="description" content="Personal bio card">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="ambient-glow"></div>
+    <div class="cyber-grid"></div>
+    <canvas id="particle-canvas"></canvas>
+
+    <main class="card-container">
+        <div class="card-top-bar">
+            <span class="live-status-pill">
+                <span class="pulse-dot"></span>
+                Online
+            </span>
+            <span class="geo-pill">
+                <span class="flag-icon">🇳🇱</span> Нидерланды
+            </span>
+        </div>
+
+        <div class="card-header">
+            <div class="avatar-wrapper">
+                <div class="avatar-aura"></div>
+                <div class="avatar-box">
+                    <img src="avatar.jpg" alt="Avatar" id="user-avatar" onerror="this.style.display='none'; document.getElementById('avatar-fallback').style.display='flex';">
+                    <div id="avatar-fallback" class="avatar-fallback">
+                        <i class="fa-solid fa-cat"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <h1 class="user-name">Mr. V</h1>
+            <p class="user-handle" id="copy-handle-header" title="Скопировать handle">
+                <span>@xiraw</span>
+                <i class="fa-regular fa-copy"></i>
+            </p>
+        </div>
+
+        <div class="action-grid">
+            <a href="https://t.me/xiraw" target="_blank" rel="noopener noreferrer" class="action-btn primary-btn">
+                <i class="fa-paper-plane fa-solid"></i>
+                <span>Telegram</span>
+            </a>
+            <a href="https://github.com/xiraws" target="_blank" rel="noopener noreferrer" class="action-btn github-btn">
+                <i class="fa-brands fa-github"></i>
+                <span>GitHub</span>
+            </a>
+        </div>
+
+        <div class="info-section">
+            <div class="info-item clickable" id="copy-username" title="Скопировать логин">
+                <div class="info-icon">
+                    <i class="fa-solid fa-at"></i>
+                </div>
+                <div class="info-content">
+                    <span class="info-value">@xiraw</span>
+                    <span class="info-label">Имя пользователя</span>
+                </div>
+                <i class="fa-regular fa-copy copy-icon"></i>
+            </div>
+
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fa-solid fa-cake-candles"></i>
+                </div>
+                <div class="info-content">
+                    <span class="info-value">8 серп. 1888 <span class="age-tag">(137 років)</span></span>
+                    <span class="info-label">День рождения</span>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fa-solid fa-location-dot"></i>
+                </div>
+                <div class="info-content">
+                    <span class="info-value">Амстердам, Нидерланды</span>
+                    <span class="info-label">Локация / Node DC2</span>
+                </div>
+                <div class="country-badge">
+                    <span>NL</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="tech-section">
+            <div class="tech-tag"><i class="fa-brands fa-python"></i> Python</div>
+            <div class="tech-tag"><i class="fa-solid fa-code"></i> C++</div>
+            <div class="tech-tag"><i class="fa-brands fa-linux"></i> Linux</div>
+            <div class="tech-tag"><i class="fa-solid fa-shield-halved"></i> Security</div>
+            <div class="tech-tag"><i class="fa-brands fa-git-alt"></i> Git</div>
+        </div>
+
+        <div id="toast" class="toast">
+            <i class="fa-solid fa-check-circle"></i>
+            <span id="toast-text">Скопировано!</span>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
