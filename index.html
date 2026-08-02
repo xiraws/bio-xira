@@ -2,19 +2,586 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mr. V</title>
     <meta name="description" content="Personal bio card">
+    
+    <!-- Mobile & Android Theme Styling -->
+    <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --bg-dark: #000000;
+            --card-bg: rgba(12, 12, 12, 0.85);
+            --card-border: rgba(255, 255, 255, 0.12);
+            --card-border-glow: rgba(255, 255, 255, 0.3);
+            
+            --accent-white: #ffffff;
+            --accent-silver: #e5e5e5;
+            --accent-glow: rgba(255, 255, 255, 0.25);
+            --accent-bg: rgba(255, 255, 255, 0.08);
+            
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            
+            --btn-bg: rgba(255, 255, 255, 0.05);
+            --btn-border: rgba(255, 255, 255, 0.12);
+            --btn-hover: rgba(255, 255, 255, 0.15);
+            
+            --radius-lg: 26px;
+            --radius-md: 16px;
+            --radius-sm: 10px;
+            
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-dark);
+        }
+
+        body {
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 16px;
+            overflow-x: hidden;
+            position: relative;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        #particle-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .ambient-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 680px;
+            height: 680px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, rgba(0, 0, 0, 0) 70%);
+            pointer-events: none;
+            z-index: 0;
+            animation: ambient-pulse 9s ease-in-out infinite alternate;
+        }
+
+        @keyframes ambient-pulse {
+            0% { transform: translate(-50%, -50%) scale(0.85); opacity: 0.5; }
+            100% { transform: translate(-50%, -50%) scale(1.18); opacity: 1; }
+        }
+
+        .cyber-grid {
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 32px 32px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .card-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 420px;
+            background: var(--card-bg);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 30px 24px;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.9),
+                        0 0 30px rgba(255, 255, 255, 0.03);
+            animation: card-entry 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card-container:hover {
+            border-color: var(--card-border-glow);
+            box-shadow: 0 30px 75px rgba(0, 0, 0, 0.95),
+                        0 0 45px rgba(255, 255, 255, 0.08);
+        }
+
+        @keyframes card-entry {
+            from {
+                opacity: 0;
+                transform: translateY(24px) scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .card-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .live-status-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            color: var(--accent-white);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .pulse-dot {
+            width: 7px;
+            height: 7px;
+            background-color: var(--accent-white);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-white);
+            animation: dot-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes dot-ping {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.35); }
+        }
+
+        .geo-pill {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .card-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .avatar-aura {
+            position: absolute;
+            inset: -6px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, transparent 0%, var(--accent-white) 50%, transparent 100%);
+            animation: aura-spin 6s linear infinite;
+            opacity: 0.5;
+            filter: blur(4px);
+        }
+
+        @keyframes aura-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .avatar-box {
+            position: relative;
+            width: 108px;
+            height: 108px;
+            border-radius: 50%;
+            background: #080808;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            z-index: 1;
+        }
+
+        .avatar-box:hover, .avatar-box:active {
+            transform: scale(1.04);
+            border-color: var(--accent-white);
+        }
+
+        .avatar-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-fallback {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #18181b 0%, #09090b 100%);
+            color: var(--accent-white);
+            font-size: 46px;
+        }
+
+        .user-name {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            letter-spacing: -0.6px;
+        }
+
+        .user-handle {
+            font-size: 0.92rem;
+            font-family: var(--font-mono);
+            color: var(--accent-silver);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            min-height: 38px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            transition: all 0.25s ease;
+            touch-action: manipulation;
+        }
+
+        .user-handle:hover, .user-handle:active {
+            background: rgba(255, 255, 255, 0.16);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: var(--accent-white);
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .action-btn {
+            background: var(--btn-bg);
+            border: 1px solid var(--btn-border);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            touch-action: manipulation;
+            transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .action-btn i {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            transition: color 0.22s ease, transform 0.22s ease;
+        }
+
+        .action-btn:hover, .action-btn:active {
+            background: var(--btn-hover);
+            border-color: rgba(255, 255, 255, 0.35);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .action-btn:hover i, .action-btn:active i {
+            color: var(--accent-white);
+            transform: scale(1.15);
+        }
+
+        .action-btn.primary-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.22);
+            color: var(--text-primary);
+        }
+
+        .action-btn.primary-btn i {
+            color: var(--accent-white);
+        }
+
+        .info-section {
+            background: rgba(18, 18, 18, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            padding: 6px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            padding: 13px 14px;
+            min-height: 48px;
+            border-radius: 12px;
+            transition: background 0.2s ease;
+            touch-action: manipulation;
+        }
+
+        .info-item.clickable {
+            cursor: pointer;
+        }
+
+        .info-item.clickable:hover, .info-item.clickable:active {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .info-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: var(--accent-bg);
+            color: var(--accent-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.05rem;
+            margin-right: 14px;
+            flex-shrink: 0;
+        }
+
+        .info-content {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .info-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            letter-spacing: -0.2px;
+        }
+
+        .age-tag {
+            color: var(--text-secondary);
+            font-family: var(--font-main);
+            font-weight: 500;
+            font-size: 0.85rem;
+            margin-left: 4px;
+        }
+
+        .info-label {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .copy-icon {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.2s ease, color 0.2s ease;
+        }
+
+        .info-item.clickable:hover .copy-icon, .info-item.clickable:active .copy-icon {
+            opacity: 1;
+            color: var(--accent-white);
+        }
+
+        .country-badge {
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--accent-white);
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        /* Copy Toast Notification */
+        .toast {
+            position: absolute;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #18181b;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: var(--text-primary);
+            padding: 11px 22px;
+            border-radius: 20px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        .toast i {
+            color: var(--accent-white);
+        }
+
+        .toast.show {
+            bottom: 24px;
+            opacity: 1;
+        }
+
+        /* Centered Welcome Modal & Blur Overlay */
+        .welcome-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.78);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            padding: 20px;
+        }
+
+        .welcome-backdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .welcome-modal {
+            background: rgba(14, 14, 16, 0.96);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 28px;
+            padding: 32px 28px;
+            text-align: center;
+            max-width: 320px;
+            width: 100%;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.95),
+                        0 0 35px rgba(255, 255, 255, 0.08);
+            transform: scale(0.88) translateY(10px);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .welcome-backdrop.active .welcome-modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .welcome-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        .welcome-btn {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.92rem;
+            font-weight: 700;
+            padding: 13px 28px;
+            min-height: 48px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            touch-action: manipulation;
+        }
+
+        .welcome-btn:hover, .welcome-btn:active {
+            background: rgba(255, 255, 255, 0.24);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-1px);
+        }
+
+        /* Android & Small Screen Adjustments */
+        @media (max-width: 480px) {
+            body {
+                padding: 12px 10px;
+            }
+
+            .card-container {
+                padding: 24px 18px;
+                border-radius: 22px;
+            }
+            
+            .action-grid {
+                gap: 10px;
+            }
+
+            .action-btn {
+                padding: 12px 10px;
+                font-size: 0.86rem;
+            }
+
+            .user-name {
+                font-size: 1.55rem;
+            }
+
+            .avatar-box {
+                width: 96px;
+                height: 96px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="ambient-glow"></div>
     <div class="cyber-grid"></div>
     <canvas id="particle-canvas"></canvas>
+
+    <!-- Centered Welcome Modal Overlay with Blur -->
+    <div id="welcome-backdrop" class="welcome-backdrop">
+        <div class="welcome-modal">
+            <h2 class="welcome-title">Привет</h2>
+            <button id="welcome-close-btn" class="welcome-btn">Дарова</button>
+        </div>
+    </div>
 
     <main class="card-container">
         <div class="card-top-bar">
@@ -23,7 +590,7 @@
                 Online
             </span>
             <span class="geo-pill">
-                <span class="flag-icon">🇳🇱</span> Нидерланды
+                <span>Нидерланды</span>
             </span>
         </div>
 
@@ -68,15 +635,7 @@
                 <i class="fa-regular fa-copy copy-icon"></i>
             </div>
 
-            <div class="info-item">
-                <div class="info-icon">
-                    <i class="fa-solid fa-cake-candles"></i>
-                </div>
-                <div class="info-content">
-                    <span class="info-value">8 серп. 1888 <span class="age-tag">(137 років)</span></span>
-                    <span class="info-label">День рождения</span>
-                </div>
-            </div>
+
 
             <div class="info-item">
                 <div class="info-icon">
@@ -92,20 +651,251 @@
             </div>
         </div>
 
-        <div class="tech-section">
-            <div class="tech-tag"><i class="fa-brands fa-python"></i> Python</div>
-            <div class="tech-tag"><i class="fa-solid fa-code"></i> C++</div>
-            <div class="tech-tag"><i class="fa-brands fa-linux"></i> Linux</div>
-            <div class="tech-tag"><i class="fa-solid fa-shield-halved"></i> Security</div>
-            <div class="tech-tag"><i class="fa-brands fa-git-alt"></i> Git</div>
-        </div>
-
         <div id="toast" class="toast">
             <i class="fa-solid fa-check-circle"></i>
             <span id="toast-text">Скопировано!</span>
         </div>
     </main>
 
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toast = document.getElementById('toast');
+            const toastText = document.getElementById('toast-text');
+            const copyUsernameBtn = document.getElementById('copy-username');
+            const copyHandleHeader = document.getElementById('copy-handle-header');
+            
+            const welcomeBackdrop = document.getElementById('welcome-backdrop');
+            const welcomeCloseBtn = document.getElementById('welcome-close-btn');
+
+            function showToast(message) {
+                if (!toast || !toastText) return;
+                toastText.textContent = message;
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2200);
+            }
+
+            function copyToClipboard(text, successMsg) {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(() => {
+                        showToast(successMsg);
+                    }).catch(() => {
+                        fallbackCopy(text, successMsg);
+                    });
+                } else {
+                    fallbackCopy(text, successMsg);
+                }
+            }
+
+            function fallbackCopy(text, successMsg) {
+                const input = document.createElement('input');
+                input.value = text;
+                document.body.appendChild(input);
+                input.select();
+                try {
+                    document.execCommand('copy');
+                    showToast(successMsg);
+                } catch (err) {
+                    showToast('Ошибка при копировании');
+                }
+                document.body.removeChild(input);
+            }
+
+            if (copyUsernameBtn) {
+                copyUsernameBtn.addEventListener('click', () => {
+                    copyToClipboard('@xiraw', 'Имя пользователя скопировано!');
+                });
+            }
+
+            if (copyHandleHeader) {
+                copyHandleHeader.addEventListener('click', () => {
+                    copyToClipboard('@xiraw', 'Логин @xiraw скопирован!');
+                });
+            }
+
+            if (welcomeBackdrop) {
+                setTimeout(() => {
+                    welcomeBackdrop.classList.add('active');
+                }, 200);
+
+                function closeWelcomeModal() {
+                    welcomeBackdrop.classList.remove('active');
+                }
+
+                if (welcomeCloseBtn) {
+                    welcomeCloseBtn.addEventListener('click', closeWelcomeModal);
+                }
+
+                welcomeBackdrop.addEventListener('click', (e) => {
+                    if (e.target === welcomeBackdrop) {
+                        closeWelcomeModal();
+                    }
+                });
+            }
+
+            initCanvas();
+        });
+
+        function initCanvas() {
+            const canvas = document.getElementById('particle-canvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            });
+
+            // Ambient background particles
+            const bgParticles = [];
+            const bgCount = Math.min(30, Math.floor(window.innerWidth / 35));
+
+            for (let i = 0; i < bgCount; i++) {
+                bgParticles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    radius: Math.random() * 1.5 + 0.5,
+                    vx: (Math.random() - 0.5) * 0.2,
+                    vy: (Math.random() - 0.5) * 0.2,
+                    alpha: Math.random() * 0.3 + 0.1
+                });
+            }
+
+            // High-end Cursor & Touch Trail System (Android & Mobile Touch Optimized)
+            const trail = [];
+            const maxTrailPoints = 25;
+            let lastMousePos = { x: 0, y: 0 };
+
+            function spawnTrailPoint(x, y) {
+                const dx = x - lastMousePos.x;
+                const dy = y - lastMousePos.y;
+                const dist = Math.hypot(dx, dy);
+
+                trail.push({
+                    x: x,
+                    y: y,
+                    radius: Math.min(7, Math.max(2.5, dist * 0.15)),
+                    alpha: 0.85,
+                    decay: Math.random() * 0.02 + 0.02,
+                    vx: (Math.random() - 0.5) * 0.6,
+                    vy: (Math.random() - 0.5) * 0.6 - 0.2,
+                    glow: Math.random() > 0.4
+                });
+
+                if (trail.length > maxTrailPoints) {
+                    trail.shift();
+                }
+
+                lastMousePos = { x: x, y: y };
+            }
+
+            function triggerSparkBurst(x, y) {
+                for (let i = 0; i < 12; i++) {
+                    const angle = (Math.PI * 2 / 12) * i + Math.random() * 0.4;
+                    const speed = Math.random() * 2.5 + 1.2;
+                    trail.push({
+                        x: x,
+                        y: y,
+                        radius: Math.random() * 2.5 + 1,
+                        alpha: 0.9,
+                        decay: 0.035,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        glow: true
+                    });
+                }
+            }
+
+            window.addEventListener('mousemove', (e) => {
+                spawnTrailPoint(e.clientX, e.clientY);
+            });
+
+            window.addEventListener('mousedown', (e) => {
+                triggerSparkBurst(e.clientX, e.clientY);
+            });
+
+            // Android Touch Events
+            window.addEventListener('touchmove', (e) => {
+                if (e.touches.length > 0) {
+                    for (let t = 0; t < e.touches.length; t++) {
+                        spawnTrailPoint(e.touches[t].clientX, e.touches[t].clientY);
+                    }
+                }
+            }, { passive: true });
+
+            window.addEventListener('touchstart', (e) => {
+                if (e.touches.length > 0) {
+                    for (let t = 0; t < e.touches.length; t++) {
+                        triggerSparkBurst(e.touches[t].clientX, e.touches[t].clientY);
+                    }
+                }
+            }, { passive: true });
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+
+                bgParticles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    if (p.x < 0) p.x = width;
+                    if (p.x > width) p.x = 0;
+                    if (p.y < 0) p.y = height;
+                    if (p.y > height) p.y = 0;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
+                    ctx.fill();
+                });
+
+                if (trail.length > 1) {
+                    ctx.beginPath();
+                    ctx.moveTo(trail[0].x, trail[0].y);
+                    for (let i = 1; i < trail.length; i++) {
+                        const xc = (trail[i].x + trail[i - 1].x) / 2;
+                        const yc = (trail[i].y + trail[i - 1].y) / 2;
+                        ctx.quadraticCurveTo(trail[i - 1].x, trail[i - 1].y, xc, yc);
+                    }
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                }
+
+                for (let i = trail.length - 1; i >= 0; i--) {
+                    const pt = trail[i];
+                    pt.x += pt.vx;
+                    pt.y += pt.vy;
+                    pt.radius *= 0.95;
+                    pt.alpha -= pt.decay;
+
+                    if (pt.alpha <= 0 || pt.radius <= 0.2) {
+                        trail.splice(i, 1);
+                        continue;
+                    }
+
+                    ctx.beginPath();
+                    ctx.arc(pt.x, pt.y, Math.max(0.3, pt.radius), 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${pt.alpha})`;
+                    
+                    if (pt.glow) {
+                        ctx.shadowBlur = 12;
+                        ctx.shadowColor = 'rgba(255, 255, 255, 0.9)';
+                    }
+                    
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+    </script>
 </body>
 </html>
