@@ -100,7 +100,7 @@
         }
         .avatar img { width: 100%; height: 100%; object-fit: cover; }
         .ph {
-            display: flex; align-items: center; justify-content: center;
+            display: none; align-items: center; justify-content: center;
             width: 100%; height: 100%;
             background: radial-gradient(circle, #18181b 0%, #09090b 100%);
             color: #fff; font-size: 45px;
@@ -156,7 +156,6 @@
             font-size: 1.02rem; margin-right: 13px; flex-shrink: 0;
         }
         .val { font-size: 0.94rem; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
-        .sub { font-size: 0.77rem; color: #a1a1aa; margin-top: 1px; }
         .copyIco { color: #71717a; font-size: 0.88rem; opacity: 0; transition: opacity 0.18s ease; margin-left: auto; }
         .itm.clickable:hover .copyIco, .itm.clickable:active .copyIco { opacity: 1; color: #fff; }
         .badge {
@@ -231,9 +230,7 @@
                 <span class="dot"></span>
                 Online
             </span>
-            <span class="geoTag">
-                <span>Нидерланды</span>
-            </span>
+            <span class="geoTag">Нидерланды</span>
         </div>
 
         <div class="header">
@@ -271,7 +268,6 @@
                 </div>
                 <div class="content">
                     <span class="val">@xiraw</span>
-                    <span class="sub">Имя пользователя</span>
                 </div>
                 <i class="fa-regular fa-copy copyIco"></i>
             </div>
@@ -282,11 +278,8 @@
                 </div>
                 <div class="content">
                     <span class="val">Амстердам, Нидерланды</span>
-                    <span class="sub">Локация / Node DC2</span>
                 </div>
-                <div class="badge">
-                    <span>NL</span>
-                </div>
+                <div class="badge">NL</div>
             </div>
         </div>
 
@@ -297,7 +290,6 @@
     </main>
 
     <script>
-        // не трогать, копирование логина
         document.addEventListener('DOMContentLoaded', () => {
             const toast = document.getElementById('toast');
             const toastTxt = document.getElementById('toastTxt');
@@ -326,12 +318,12 @@
                 i.value = txt;
                 document.body.appendChild(i);
                 i.select();
-                try { document.execCommand('copy'); showToast(msg); } catch(e){}
+                try { document.execCommand('copy'); showToast(msg); } catch(e) {}
                 document.body.removeChild(i);
             }
 
-            if (btnCopyUser) btnCopyUser.addEventListener('click', () => copyText('@xiraw', 'Имя пользователя скопировано!'));
-            if (btnHandle) btnHandle.addEventListener('click', () => copyText('@xiraw', 'Логин @xiraw скопирован!'));
+            if (btnCopyUser) btnCopyUser.addEventListener('click', () => copyText('@xiraw', 'Скопировано!'));
+            if (btnHandle) btnHandle.addEventListener('click', () => copyText('@xiraw', 'Скопировано!'));
 
             if (welcomeModal) {
                 setTimeout(() => welcomeModal.classList.add('active'), 180);
